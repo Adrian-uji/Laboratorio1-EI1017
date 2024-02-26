@@ -2,13 +2,27 @@ import java.util.HashMap;
 import java.util.List;
 
 public class Table {
-    List<String> header;
-     List<Row> rows;
+    //Elementos
+    private List<String> header;
+    private List<Row> rows;
+
+     //Constructores
     public Table(){
         header = null;
+        rows = null;
     }
     public Table(List<String> h, List<Row> r){
         header = h;
         rows = r;
+    }
+
+    //Métodos
+    public Row getRowAt(int pos) throws IndexOutOfBoundsException{
+        if (pos > rows.size()){
+            throw new IndexOutOfBoundsException();
+        }
+        else{
+            return rows.get(pos);
+        }
     }
 }

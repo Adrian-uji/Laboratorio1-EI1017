@@ -2,11 +2,19 @@ import java.util.HashMap;
 import java.util.List;
 
 public class Row {
-    private HashMap<List<Double>,String> data;
+    //Elementos
+    private List<Double> data;
+
+    //Constructores
     public Row(){
         data = null;
     }
-    public Row( HashMap<List<Double>,String> l){
+    public Row( List<Double> l){
         data = l;
+    }
+
+    //Métodos
+    public List<Double> getData(){
+        return data;
     }
 }
