@@ -4,7 +4,12 @@ import java.util.*;
 
 public class CSV {
     //Contador de columnas
-    int cont = 0;
+    private int cont;
+
+    //Constructor
+    public CSV(){
+        cont = 0;
+    }
     //Métodos
 
     //Métodos read
@@ -54,6 +59,7 @@ public class CSV {
             }
 
             TableWithLabels table = new TableWithLabels(headers,rows,labelsToolIndex);
+            System.out.println("ROWS SIZE: "+ rows.size());
             return table;
         }
         else{

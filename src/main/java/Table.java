@@ -25,4 +25,13 @@ public class Table {
             return rows.get(pos);
         }
     }
+    public int readRows(){
+        return rows.size();
+    }
+    public List<String> getHeader(){
+        return header;
+    }
+    public List<Row> getRows(){
+        return rows;
+    }
 }
