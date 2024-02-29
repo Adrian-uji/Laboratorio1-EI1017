@@ -1,37 +1,25 @@
-import java.util.HashMap;
 import java.util.List;
 
 public class Table {
-    //Elementos
-    private List<String> header;
+    //ATRIBUTOS
+    private List<String> headers;
     private List<Row> rows;
 
-     //Constructores
-    public Table(){
-        header = null;
-        rows = null;
-    }
-    public Table(List<String> h, List<Row> r){
-        header = h;
+
+    //CONSTRUCTORES
+    public Table(){headers = null; rows = null;}
+    public Table (List<String> h, List<Row> r){
+        headers = h;
         rows = r;
     }
 
-    //Métodos
-    public Row getRowAt(int pos) throws IndexOutOfBoundsException{
-        if (pos > rows.size()){
+    //MÉTODOS
+    public Row getRowAt(int pos){
+        if (rows.size() < pos){
             throw new IndexOutOfBoundsException();
         }
         else{
             return rows.get(pos);
         }
-    }
-    public int readRows(){
-        return rows.size();
-    }
-    public List<String> getHeader(){
-        return header;
-    }
-    public List<Row> getRows(){
-        return rows;
     }
 }

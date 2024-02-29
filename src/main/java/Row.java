@@ -1,20 +1,19 @@
-import java.util.HashMap;
 import java.util.List;
 
 public class Row {
-    //Elementos
+    //ATRIBUTOS
     private List<Double> data;
 
-    //Constructores
+    //CONSTRUCTORES
     public Row(){
         data = null;
     }
-    public Row( List<Double> l){
-        data = l;
+    public Row(List<Double> d){
+        data = d;
     }
 
-    //Métodos
+    //MÉTODOS
     public List<Double> getData(){
-        return data;
+        return this.data;
     }
 }

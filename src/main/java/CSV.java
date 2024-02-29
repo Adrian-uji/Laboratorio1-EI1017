@@ -1,35 +1,30 @@
 import java.io.*;
 import java.util.*;
 
-
 public class CSV {
-    //Contador de columnas
-    private int cont;
-
-    //Constructor
-    public CSV(){
-        cont = 0;
-    }
-    //Métodos
-
-    //Métodos read
+    //readTable
     public Table readTable(String document) throws IOException {
         File archivo = new File(document);
         if (archivo.exists()){
+            //Declaramos las variables que necesitamos
             FileReader fr = new FileReader(archivo);
             BufferedReader br = new BufferedReader(fr); //Esto lee de una en una las líneas
-            String linea;
-            int i = 0;
-            List<String> headers = new LinkedList<String>();
+            List<String> headers;
             List<Row> rows = new ArrayList();
+
+            //Si hay una primera línea encuentra una cabecera y luego va una a una a por las row
+            String linea = br.readLine();
+            if (linea != null){
+                headers = readHeaders(linea);
+            }
+            else{
+                throw new IOException(); //Hay que cambiar la excepción
+            }
             while((linea = br.readLine()) != null){
-                if (i<1){
-                    headers = readHeaders(linea);
-                }
-                else{
-                    rows.add(readRows(linea));
-                }
-                i++;
+                rows.add(readRows(linea));
+            }
+            if (rows.size() == 0){
+                throw new IOException(); //Hay que cambiar la excepción
             }
             Table table = new Table(headers,rows);
             return table;
@@ -38,94 +33,75 @@ public class CSV {
             throw new FileNotFoundException();
         }
     }
-    public TableWithLabels readTableWithLabels (String document) throws IOException {
-        Map<String, Integer> labelsToolIndex = new HashMap<>();
-        File archivo = new File(document);
-        if (archivo.exists()){
-            FileReader fr = new FileReader(archivo);
-            BufferedReader br = new BufferedReader(fr);
-            String linea;
-            int i = 0;
-            List<String> headers = new LinkedList<String>();
-            List<RowWithLabel> rows = new ArrayList();
-            while((linea = br.readLine()) != null){
-                if (i<1){
-                    headers = readHeaders(linea);
-                }
-                else{
-                    rows.add(readRowsWithLable(linea, labelsToolIndex));
-                }
-                i++;
-            }
+    //Auxiliares de readTable
+    private List<String> readHeaders(String linea){
+        String[] words = linea.split(",");
+        List<String> headers = new LinkedList<>();
+        for (String word:words){
+            if (!word.equals("class"))
+                headers.add(word);
+        }
+        return headers;
+    }
+    private Row readRows(String linea){
+        String[] words = linea.split(",");
+        List<Double> row = new LinkedList<>();
+        for (String word:words){
+            row.add(Double.parseDouble(word));
+        }
+        Row r = new Row(row);
+        return r;
+    }
 
-            TableWithLabels table = new TableWithLabels(headers,rows,labelsToolIndex);
-            System.out.println("ROWS SIZE: "+ rows.size());
+    //readTableWhithLabels
+    public TableWithLabels readTableWithLabel(String file) throws IOException {
+        File archivo = new File(file);
+        if (archivo.exists()){
+            //Declaramos las variables que necesitamos
+            FileReader fr = new FileReader(archivo);
+            BufferedReader br = new BufferedReader(fr); //Esto lee de una en una las líneas
+            List<String> headers;
+            List<Row> rows = new ArrayList();
+            Map<String, Integer> labelsToIndex = new HashMap<>();
+
+            //Si hay una primera línea encuentra una cabecera y luego va una a una a por las row
+            String linea = br.readLine();
+            if (linea != null){
+                headers = readHeaders(linea);
+            }
+            else{
+                throw new IOException(); //Hay que cambiar la excepción
+            }
+            while((linea = br.readLine()) != null){
+                rows.add(readRowsWithLabel(linea, labelsToIndex));
+            }
+            if (rows.size() == 0){
+                throw new IOException(); //Hay que cambiar la excepción
+            }
+            TableWithLabels table = new TableWithLabels(headers,rows,labelsToIndex);
             return table;
         }
         else{
             throw new FileNotFoundException();
         }
     }
-    //Métodos auxiliares
-    public List<String> readHeaders(String linea) {
-        List<String> header = new ArrayList<>();
-        String words = "";
-        for (int i = 0; i < linea.length(); i++) {
-            char caracter = linea.charAt(1);
-            if (caracter != ',') {
-                words = words + caracter;
-            } else {
-                if (!words.equals("class"))
-                {
-                    header.add(words);
-                    cont++;
-                }
-                words = "";
-            }
-        }
-        return header;
-    }
-    public Row readRows(String linea){
-        Row rows = new Row();
-        List<Double> rowList = new LinkedList<>();
-        String numberString = "";
-        for (int i = 0; i < linea.length(); i++) {
-            char caracter = linea.charAt(i);
-            if (caracter != ',') {
-                numberString = numberString + caracter;
-            } else {
-                rowList.add(Double.parseDouble(numberString));
-                numberString = "";
-            }
-        }
-        rows = (Row) rowList;
-        return rows;
-    }
-    public RowWithLabel readRowsWithLable(String linea, Map<String, Integer> labelsMap){
+    //Auxiliares de readTableWithLabel
+    private RowWhithLabel readRowsWithLabel (String linea, Map<String,Integer> labelsToIndex){
+        String[] words = linea.split(",");
+        List<Double> row = new LinkedList<>();
         int numberClass;
-        List<Double> rowList = new LinkedList<>();
-        String numberString = "";
-        for (int i = 0; i < cont; i++) {
-            char caracter = linea.charAt(i);
-            if (caracter != ',') {
-                numberString = numberString + caracter;
-            } else {
-                rowList.add(Double.parseDouble(numberString));
-                numberString = "";
-            }
+        for (int i = 0; i<words.length-1;i++){
+            row.add(Double.parseDouble(words[i]));
         }
-        String identifier = "";
-        for (int i = cont; i<linea.length();i++){
-            identifier += linea.charAt(i);
-        }
-        if (labelsMap.containsKey(identifier)){
-            numberClass = labelsMap.get(identifier);
+        String clase = words[words.length-1];
+        if (labelsToIndex.containsKey(clase)){
+            numberClass = labelsToIndex.get(clase);
         }
         else{
-            numberClass = labelsMap.size();
-            labelsMap.put(identifier,numberClass);
+            numberClass = labelsToIndex.size();
+            labelsToIndex.put(clase,numberClass);
         }
-        RowWithLabel row = new RowWithLabel(rowList,numberClass);
-        return row;
+        RowWhithLabel r = new RowWhithLabel(row,numberClass);
+        return r;
     }
 }
