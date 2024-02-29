@@ -22,4 +22,11 @@ public class Table {
             return rows.get(pos);
         }
     }
+    public int getSize(){
+        return rows.size();
+    }
+
+    public int getColumnSize(){
+        return headers.size();
+    }
 }

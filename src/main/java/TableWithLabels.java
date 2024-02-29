@@ -1,5 +1,6 @@
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class TableWithLabels extends Table{
     //ATRIBUTOS
@@ -17,5 +18,10 @@ public class TableWithLabels extends Table{
     }
 
     //MÉTODOS
-
+    public Set<String> getLabels(){
+        if (labelsToIndex == null)
+            throw new NullPointerException();
+        else
+            return labelsToIndex.keySet();
+    }
 }
